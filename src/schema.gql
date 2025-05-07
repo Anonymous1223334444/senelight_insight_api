@@ -1,0 +1,168 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Category {
+  createdAt: DateTime!
+  emoji: String!
+  id: ID!
+  name: String!
+  type: TransactionType!
+  updatedAt: DateTime!
+  user: User!
+  userId: Float!
+}
+
+type CategoryExpense {
+  amount: Float!
+  categoryId: Float!
+  categoryName: String!
+}
+
+input CreateCategoryInput {
+  emoji: String!
+  name: String!
+  type: TransactionType!
+}
+
+input CreateTransactionInput {
+  amount: Float!
+  categoryId: Int!
+  date: DateTime
+  description: String!
+  type: TransactionType!
+}
+
+input CreateUserInput {
+  currency: CurrencyType! = XOF
+  email: String!
+  name: String!
+  password: String!
+  phone: String
+}
+
+"""Available currency types for transactions"""
+enum CurrencyType {
+  AED
+  AUD
+  BRL
+  CAD
+  CHF
+  CNY
+  DKK
+  EGP
+  EUR
+  GBP
+  GHS
+  HKD
+  INR
+  JPY
+  KES
+  KRW
+  MAD
+  MXN
+  NGN
+  NOK
+  NZD
+  RUB
+  SAR
+  SEK
+  SGD
+  TND
+  USD
+  XAF
+  XOF
+  ZAR
+}
+
+type CurrentMonthData {
+  balance: Float!
+  expenses: Float!
+  incomes: Float!
+  month: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type LoginResponse {
+  access_token: String!
+  user: User!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+type MonthlyData {
+  balance: Float!
+  expenses: Float!
+  incomes: Float!
+  month: String!
+}
+
+type Mutation {
+  createCategory(createCategoryInput: CreateCategoryInput!): Category!
+  createTransaction(createTransactionInput: CreateTransactionInput!): Transaction!
+  createUser(createUserInput: CreateUserInput!): User!
+  deleteTransaction(id: Float!): Transaction!
+  login(loginInput: LoginUserInput!): LoginResponse!
+  removeCategory(id: Float!): Category!
+  updateCategory(id: Float!, updateCategoryInput: CreateCategoryInput!): Category!
+  updateTransaction(createTransactionInput: CreateTransactionInput!, id: Float!): Transaction!
+}
+
+type Query {
+  balance: Float!
+  categories: [Category!]!
+  category(id: Float!): Category!
+  currentMonthHistory: CurrentMonthData!
+  expensesByCategory: [CategoryExpense!]!
+  hello: String!
+  monthlyExpenses: Float!
+  monthlyHistory: [MonthlyData!]!
+  monthlyIncomes: Float!
+  profile: User!
+  transaction(id: Float!): Transaction!
+  transactions(filters: TransactionFilterInput): [Transaction!]!
+}
+
+type Transaction {
+  amount: Float!
+  category: Category
+  categoryId: Float!
+  createdAt: DateTime!
+  date: DateTime!
+  description: String!
+  id: ID!
+  type: TransactionType!
+  updatedAt: DateTime!
+  userId: Float!
+}
+
+input TransactionFilterInput {
+  categoryId: Int
+  endDate: DateTime
+  limit: Int
+  offset: Int
+  startDate: DateTime
+  type: TransactionType
+}
+
+enum TransactionType {
+  EXPENSE
+  INCOME
+}
+
+type User {
+  createdAt: DateTime!
+  currency: CurrencyType!
+  email: String!
+  id: ID!
+  name: String!
+  phone: String
+  updatedAt: DateTime!
+}
