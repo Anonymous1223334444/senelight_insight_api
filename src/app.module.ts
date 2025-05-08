@@ -47,15 +47,6 @@ import { JSONScalar } from './common/scalars/json.scalar';
       csrfPrevention: false,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      introspection:true
-    }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      playground: false,
-      sortSchema: true,
-      csrfPrevention: false,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
       introspection: true,
     }),
     UsersModule,

@@ -2,77 +2,43 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Category {
-  createdAt: DateTime!
-  emoji: String!
-  id: ID!
-  name: String!
-  type: TransactionType!
-  updatedAt: DateTime!
-  user: User!
-  userId: Float!
-}
-
 type CategoryExpense {
   amount: Float!
   categoryId: Float!
   categoryName: String!
 }
 
-input CreateCategoryInput {
+input CreateImpactTypeInput {
   emoji: String!
   name: String!
-  type: TransactionType!
 }
 
-input CreateTransactionInput {
-  amount: Float!
-  categoryId: Int!
-  date: DateTime
+input CreateLocationInput {
+  district: String!
+  latitude: Float
+  longitude: Float
+  name: String!
+}
+
+input CreateOutageInput {
   description: String!
-  type: TransactionType!
+  latitude: Float
+  longitude: Float
+}
+
+input CreateReportInput {
+  description: String!
+  impactTypeId: Float!
+  latitude: Float
+  longitude: Float
+  sentimentText: String
 }
 
 input CreateUserInput {
-  currency: CurrencyType! = XOF
   email: String!
   name: String!
   password: String!
   phone: String
-}
-
-"""Available currency types for transactions"""
-enum CurrencyType {
-  AED
-  AUD
-  BRL
-  CAD
-  CHF
-  CNY
-  DKK
-  EGP
-  EUR
-  GBP
-  GHS
-  HKD
-  INR
-  JPY
-  KES
-  KRW
-  MAD
-  MXN
-  NGN
-  NOK
-  NZD
-  RUB
-  SAR
-  SEK
-  SGD
-  TND
-  USD
-  XAF
-  XOF
-  ZAR
 }
 
 type CurrentMonthData {
@@ -82,10 +48,46 @@ type CurrentMonthData {
   month: String!
 }
 
+type DashboardStatsDto {
+  activeOutages: Int!
+  pendingReports: Int!
+  totalOutages: Int!
+  totalReports: Int!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type ImpactType {
+  createdAt: DateTime!
+  emoji: String!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+  user: User!
+  userId: Float!
+}
+
+type ImpactTypeCountDto {
+  count: Int!
+  impactTypeId: Int!
+  impactTypeName: String!
+}
+
+"""JSON custom scalar type"""
+scalar JSON
+
+type Location {
+  createdAt: DateTime!
+  district: String!
+  id: ID!
+  latitude: Float
+  longitude: Float
+  name: String!
+  updatedAt: DateTime!
+}
 
 type LoginResponse {
   access_token: String!
@@ -97,6 +99,11 @@ input LoginUserInput {
   password: String!
 }
 
+type MapDataDto {
+  outages: [OutagePointDto!]!
+  reports: [ReportPointDto!]!
+}
+
 type MonthlyData {
   balance: Float!
   expenses: Float!
@@ -104,62 +111,123 @@ type MonthlyData {
   month: String!
 }
 
+type MonthlyReportCountDto {
+  count: Int!
+  date: String!
+}
+
 type Mutation {
-  createCategory(createCategoryInput: CreateCategoryInput!): Category!
-  createTransaction(createTransactionInput: CreateTransactionInput!): Transaction!
+  createImpactType(createImpactTypeInput: CreateImpactTypeInput!): ImpactType!
+  createLocation(createLocationInput: CreateLocationInput!): Location!
+  createOutage(createOutageInput: CreateOutageInput!, latitude: Float, longitude: Float): Outage!
+  createReport(createReportInput: CreateReportInput!): Report!
   createUser(createUserInput: CreateUserInput!): User!
-  deleteTransaction(id: Float!): Transaction!
   login(loginInput: LoginUserInput!): LoginResponse!
-  removeCategory(id: Float!): Category!
-  updateCategory(id: Float!, updateCategoryInput: CreateCategoryInput!): Category!
-  updateTransaction(createTransactionInput: CreateTransactionInput!, id: Float!): Transaction!
+  removeImpactType(id: Float!): ImpactType!
+  removeLocation(id: Float!): Location!
+  removeOutage(id: Float!): Outage!
+  removeReport(id: Float!): Report!
+  resolveOutage(id: Float!): Outage!
+  updateImpactType(id: Float!, updateImpactTypeInput: CreateImpactTypeInput!): ImpactType!
+  updateLocation(id: Float!, updateLocationInput: CreateLocationInput!): Location!
+  updateOutage(id: Float!, latitude: Float, longitude: Float, updateOutageInput: UpdateOutageInput!): Outage!
+  updateReportStatus(id: Float!, networkStatus: String!): Report!
 }
 
-type Query {
-  balance: Float!
-  categories: [Category!]!
-  category(id: Float!): Category!
-  currentMonthHistory: CurrentMonthData!
-  expensesByCategory: [CategoryExpense!]!
-  hello: String!
-  monthlyExpenses: Float!
-  monthlyHistory: [MonthlyData!]!
-  monthlyIncomes: Float!
-  profile: User!
-  transaction(id: Float!): Transaction!
-  transactions(filters: TransactionFilterInput): [Transaction!]!
+"""Status of report network synchronization"""
+enum NetworkStatus {
+  FAILED
+  PENDING
+  SENT
 }
 
-type Transaction {
-  amount: Float!
-  category: Category
-  categoryId: Float!
+type Outage {
   createdAt: DateTime!
-  date: DateTime!
   description: String!
+  endDate: DateTime
   id: ID!
-  type: TransactionType!
+  latitude: Float
+  longitude: Float
+  reportCount: Float!
+  resolvedStatus: Boolean!
+  startDate: DateTime!
   updatedAt: DateTime!
   userId: Float!
 }
 
-input TransactionFilterInput {
-  categoryId: Int
-  endDate: DateTime
-  limit: Int
-  offset: Int
-  startDate: DateTime
-  type: TransactionType
+type OutagePointDto {
+  id: Int!
+  latitude: Float!
+  longitude: Float!
+  reportCount: Int!
+  resolved: Boolean!
+  type: String!
 }
 
-enum TransactionType {
-  EXPENSE
-  INCOME
+type OutageStatisticsDto {
+  percentResolved: Int!
+  resolved: Int!
+  total: Int!
+  unresolved: Int!
+}
+
+type Query {
+  balance: Float!
+  currentMonthHistory: CurrentMonthData!
+  dashboardStats: DashboardStatsDto!
+  expensesByCategory: [CategoryExpense!]!
+  hello: String!
+  impactType(id: Float!): ImpactType!
+  impactTypes: [ImpactType!]!
+  location(id: Float!): Location!
+  locations: [Location!]!
+  locationsByDistrict(district: String!): [Location!]!
+  mapData: MapDataDto!
+  monthlyExpenses: Float!
+  monthlyHistory: [MonthlyData!]!
+  monthlyIncomes: Float!
+  monthlyReportCounts: [MonthlyReportCountDto!]!
+  outage(id: Float!): Outage!
+  outageStatistics: OutageStatisticsDto!
+  outages(limit: Float, resolved: Boolean): [Outage!]!
+  profile: User!
+  report(id: Float!): Report!
+  reports(limit: Float, status: String): [Report!]!
+  reportsByImpactType: [ImpactTypeCountDto!]!
+}
+
+type Report {
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  impactTypeId: Float!
+  latitude: Float
+  longitude: Float
+  networkStatus: NetworkStatus!
+  reportDate: DateTime!
+  sentimentText: String!
+  updatedAt: DateTime!
+  userId: Float!
+}
+
+type ReportPointDto {
+  id: Int!
+  impactType: String!
+  latitude: Float!
+  longitude: Float!
+  status: String!
+  type: String!
+}
+
+input UpdateOutageInput {
+  description: String
+  latitude: Float
+  longitude: Float
+  resolvedStatus: Boolean
 }
 
 type User {
   createdAt: DateTime!
-  currency: CurrencyType!
   email: String!
   id: ID!
   name: String!

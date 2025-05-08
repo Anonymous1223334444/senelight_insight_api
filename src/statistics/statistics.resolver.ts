@@ -6,6 +6,9 @@ import { CurrentUser } from '../auth/current-user.decorator';
 import { CategoryExpense, MonthlyData, CurrentMonthData } from './dto/statistics.types';
 import { Float } from '@nestjs/graphql';
 import { JwtUser } from '../auth/jwt.type';
+import { ImpactTypeCountDto } from './dto/impact-type-count.dto';
+import { MonthlyReportCountDto } from './dto/monthly-report-count.dto';
+import { OutageStatisticsDto } from './dto/outage-statistics.dto';
 
 @Resolver()
 @UseGuards(JwtAuthGuard)
@@ -42,17 +45,17 @@ export class StatisticsResolver {
         return this.statisticsService.getCurrentMonthHistory(user.userId);
     }
 
-    @Query(() => [JSON])
+    @Query(() => [ImpactTypeCountDto])
     async reportsByImpactType(@CurrentUser() user: JwtUser) {
         return this.statisticsService.getReportsByImpactType(user.userId);
     }
 
-    @Query(() => [JSON])
+    @Query(() => [MonthlyReportCountDto])
     async monthlyReportCounts(@CurrentUser() user: JwtUser) {
         return this.statisticsService.getMonthlyReportCounts(user.userId);
     }
 
-    @Query(() => JSON)
+    @Query(() => OutageStatisticsDto)
     async outageStatistics(@CurrentUser() user: JwtUser) {
         return this.statisticsService.getOutageStatistics(user.userId);
     }
