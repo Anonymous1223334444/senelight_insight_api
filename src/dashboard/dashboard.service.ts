@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { OutagesService } from '../outages/outages.service';
 import { ReportsService } from '../reports/reports.service';
+import { DashboardStatsDto } from './dto/dashboard-stats.dto';
+import { MapDataDto, OutagePointDto, ReportPointDto } from './dto/map-data.dto';
 
 @Injectable()
 export class DashboardService {
@@ -9,7 +11,7 @@ export class DashboardService {
     private readonly reportsService: ReportsService
   ) {}
 
-  async getRecentStats(userId: number) {
+  async getRecentStats(userId: number): Promise<DashboardStatsDto> {
     const outages = await this.outagesService.findAll(userId, { limit: 5 });
     const reports = await this.reportsService.findAll(userId, { limit: 5 });
     
@@ -24,7 +26,7 @@ export class DashboardService {
     };
   }
 
-  async getMapData(userId: number) {
+  async getMapData(userId: number): Promise<MapDataDto> {
     const outages = await this.outagesService.findAll(userId);
     const reports = await this.reportsService.findAll(userId);
     

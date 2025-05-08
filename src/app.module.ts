@@ -16,6 +16,7 @@ import { OutagesModule } from './outages/outages.module';
 import { LocationsModule } from './locations/locations.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { JSONScalar } from './common/scalars/json.scalar';
 
 @Module({
   imports: [
@@ -48,6 +49,15 @@ import { StatisticsModule } from './statistics/statistics.module';
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       introspection:true
     }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      playground: false,
+      sortSchema: true,
+      csrfPrevention: false,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      introspection: true,
+    }),
     UsersModule,
     AuthModule,
     ImpactTypesModule,
@@ -57,6 +67,6 @@ import { StatisticsModule } from './statistics/statistics.module';
     DashboardModule,
     StatisticsModule
   ],
-  providers: [AppService, AppResolver],
+  providers: [AppService, AppResolver, JSONScalar],
 })
 export class AppModule {}
